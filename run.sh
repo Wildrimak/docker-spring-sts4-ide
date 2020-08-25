@@ -9,7 +9,7 @@
 ECLIPSE_DIR=${PWD}/.eclipse     # on host machine
 ECLIPSE_WORKSPACE_DIR=${PWD}/eclipse-workspace  #on host machine
 MAVEN_DIR=${HOME}/.m2 #on host machine
-DOCKER_ECLIPSE_WORKSPACE_DIR=/home/wildrimak/Documents/workspace-spring-tool-suite-4-4.1.2.RELEASE
+DOCKER_ECLIPSE_WORKSPACE_DIR=/home/wildrimak/Documents/workspace-spring-tool-suite-4-4.7.1.RELEASE
 
 [ ! -d $ECLIPSE_DIR ] && mkdir -p $ECLIPSE_DIR
 [ ! -d $ECLIPSE_WORKSPACE_DIR ] && mkdir -p $ECLIPSE_WORKSPACE_DIR

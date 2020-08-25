@@ -1,6 +1,6 @@
 FROM mvpjava/ubuntu-x11
 
-MAINTAINER Andy Luis "MVP Java - mvpjava.com"
+LABEL maintainer "Wildrimak - finalwildrimak@gmail.com"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -64,9 +64,45 @@ chmod 0440 /etc/sudoers.d/${USER}
 RUN apt-get install -y docker.io 
 RUN usermod -aG docker $USER
 RUN apt-get install git -y
+RUN apt-get install zsh -y
 
 ENV DEBIAN_FRONTEND teletype
 
+RUN apt-get install -y \
+  software-properties-common \
+  postgresql \
+  postgresql-client \
+  postgresql-contrib
+
+ENV DBUSER=postgres
+ENV DBPASS=postgres
+ENV DBNAME=postgres
+
+USER ${USER}
+RUN echo $(echo $DBUSER):$(echo $DBPASS) | sudo chpasswd
+
+USER ${DBUSER}
+# Create a PostgreSQL role named ``docker`` with ``docker`` as the password and
+# then create a database `docker` owned by the ``docker`` role.
+RUN /etc/init.d/postgresql start && \
+    # psql --command "CREATE USER ${DBUSER} WITH SUPERUSER PASSWORD '${DBPASS}';" && \
+    # createdb -O ${DBUSER} ${DBNAME} && \
+    psql --command "ALTER USER postgres WITH PASSWORD 'postgres';" && \
+    /etc/init.d/postgresql restart
+
+
+# Adjust PostgreSQL configuration so that remote connections to the
+# database are possible.
+RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/$(ls /etc/postgresql)/main/pg_hba.conf
+
+# And add ``listen_addresses`` to ``/etc/postgresql/$(ls /etc/postgresql)/main/postgresql.conf``
+RUN echo "listen_addresses='*'" >> /etc/postgresql/$(ls /etc/postgresql)/main/postgresql.conf
+
+# Add VOLUMEs to allow backup of config, logs and databases
+VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
+
+# Set the default command to run when starting the container
+#CMD ["/usr/lib/postgresql/${DBVERSION}/bin/postgres", "-D", "/var/lib/postgresql/${DBVERSION}/main", "-c", "config_file=/etc/postgresql/12/main/postgresql.conf"]
+
 USER ${USER} 
 WORKDIR ${ECLIPSE_WORKSPACE}
-CMD ["/opt/sts-4.6.0.RELEASE/SpringToolSuite4"]
