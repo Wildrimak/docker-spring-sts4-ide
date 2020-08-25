@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t mvpjava/spring-sts4-ide:jdk8 .
+docker build -t mvpjava/spring-sts4-ide:jdk14 .

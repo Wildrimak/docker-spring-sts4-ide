@@ -23,6 +23,6 @@ docker container run -d --rm \
 -v $ECLIPSE_WORKSPACE_DIR:$DOCKER_ECLIPSE_WORKSPACE_DIR \
 -v $MAVEN_DIR:$MAVEN_DIR \
 -w $DOCKER_ECLIPSE_WORKSPACE_DIR \
--h sts4-jdk8 \
---name spring-sts4-ide-jdk8 \
-mvpjava/spring-sts4-ide:jdk8
+-h sts4-jdk14 \
+--name spring-sts4-ide-jdk14 \
+mvpjava/spring-sts4-ide:jdk14

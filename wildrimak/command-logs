@@ -1,0 +1,3 @@
+docker image build -t env-ubu-jav .
+docker container create -it --name vida-louca env-ubu-jav
+docker container start -i vida-louca
