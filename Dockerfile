@@ -1,4 +1,4 @@
-FROM mvpjava/ubuntu-x11
+FROM ubuntu:20.04
 
 LABEL maintainer "Wildrimak - finalwildrimak@gmail.com"
 
@@ -7,11 +7,13 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
 apt-get install -y apt-utils && \
 apt-get install -y libcanberra-gtk3-module && \
-apt-get install -y curl wget git vim && \
+apt-get install -y curl && \
+apt-get install -y git && \
+apt-get install -y vim && \
 apt-get clean all && \
-sudo rm -rf /tmp/* && \
-sudo rm -rf /var/cache/apk/*
-
+rm -rf /tmp/* && \
+rm -rf /var/cache/apk/* && \
+apt-get install gedit -y
 ###################################
 ##Install Java
 ###################################
@@ -85,8 +87,8 @@ USER ${DBUSER}
 # Create a PostgreSQL role named ``docker`` with ``docker`` as the password and
 # then create a database `docker` owned by the ``docker`` role.
 RUN /etc/init.d/postgresql start && \
-    # psql --command "CREATE USER ${DBUSER} WITH SUPERUSER PASSWORD '${DBPASS}';" && \
-    # createdb -O ${DBUSER} ${DBNAME} && \
+    psql --command "CREATE USER ${USER} WITH SUPERUSER PASSWORD '${DBPASS}';" && \
+    createdb -O ${USER} ${USER} && \
     psql --command "ALTER USER postgres WITH PASSWORD 'postgres';" && \
     /etc/init.d/postgresql restart
 
@@ -99,10 +101,25 @@ RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/$(ls /etc/postgres
 RUN echo "listen_addresses='*'" >> /etc/postgresql/$(ls /etc/postgresql)/main/postgresql.conf
 
 # Add VOLUMEs to allow backup of config, logs and databases
-VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
+# Ta descartavel pq eu inicio com parametros
+#VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 # Set the default command to run when starting the container
 #CMD ["/usr/lib/postgresql/${DBVERSION}/bin/postgres", "-D", "/var/lib/postgresql/${DBVERSION}/main", "-c", "config_file=/etc/postgresql/12/main/postgresql.conf"]
 
 USER ${USER} 
-WORKDIR ${ECLIPSE_WORKSPACE}
+
+RUN git config --global user.email "wildrimak@gmail.com" && \
+  git config --global user.name "Wildrimak"
+
+
+USER root
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && \
+apt-get install -y sudo xauth xorg openbox && \
+apt-get install -y libxext-dev libxrender-dev libxtst-dev && \
+apt-get install -y apt-transport-https ca-certificates libcurl3-gnutls && \
+apt-get clean && \
+rm -rf /var/lib/apt/lists/*

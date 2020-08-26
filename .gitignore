@@ -1,2 +1,5 @@
+postgres/*
 eclipse-workspace/*
+.eclipse/*
 *.tar.gz
+

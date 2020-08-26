@@ -8,12 +8,17 @@
 #permissions in Docker container.
 ECLIPSE_DIR=${PWD}/.eclipse     # on host machine
 ECLIPSE_WORKSPACE_DIR=${PWD}/eclipse-workspace  #on host machine
+POSTGRES_DATA_DIR=${PWD}/postgres
 MAVEN_DIR=${HOME}/.m2 #on host machine
-DOCKER_ECLIPSE_WORKSPACE_DIR=/home/wildrimak/Documents/workspace-spring-tool-suite-4-4.7.1.RELEASE
+DOCKER_ECLIPSE_WORKSPACE_DIR=/home/$USER/Documents/workspace-spring-tool-suite-4-4.7.1.RELEASE
 
 [ ! -d $ECLIPSE_DIR ] && mkdir -p $ECLIPSE_DIR
 [ ! -d $ECLIPSE_WORKSPACE_DIR ] && mkdir -p $ECLIPSE_WORKSPACE_DIR
 [ ! -d $MAVEN_DIR ] && mkdir -p $MAVEN_DIR
+
+export DBVERSION=10
+#-e POSTGRES_PASSWORD=postgres \
+#-v $POSTGRES_DATA_DIR:/var/lib/ \
 
 docker container run -i --rm \
 -e DISPLAY \
@@ -25,4 +30,5 @@ docker container run -i --rm \
 -w $DOCKER_ECLIPSE_WORKSPACE_DIR \
 -h sts4-jdk14 \
 --name spring-sts4-ide-jdk14 \
-wildrimak/spring-sts4-ide:jdk14 bash -c "/opt/sts-4.7.1.RELEASE/SpringToolSuite4"
+wildrimak/spring-sts4-ide:jdk14 bash -c "sudo pg_ctlcluster "$DBVERSION" main start && /opt/sts-4.7.1.RELEASE/SpringToolSuite4"
+
