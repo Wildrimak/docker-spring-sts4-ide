@@ -14,6 +14,7 @@ apt-get clean all && \
 rm -rf /tmp/* && \
 rm -rf /var/cache/apk/* && \
 apt-get install gedit -y
+
 ###################################
 ##Install Java
 ###################################
@@ -44,6 +45,11 @@ ENV PATH $PATH:${MAVEN_HOME}/bin
 WORKDIR /usr 
 ADD apache-maven-3.6.3-bin.tar.gz . 
 RUN ln -s ${MAVEN_HOME} /usr/maven
+
+###################################
+## Configure user and database 
+###################################
+
 
 ENV USER=wildrimak 
 ENV HOME=/home/wildrimak 
@@ -80,8 +86,8 @@ ENV DBUSER=postgres
 ENV DBPASS=postgres
 ENV DBNAME=postgres
 
-USER ${USER}
-RUN echo $(echo $DBUSER):$(echo $DBPASS) | sudo chpasswd
+#USER ${USER}
+RUN echo $(echo $DBUSER):$(echo $DBPASS) | chpasswd
 
 USER ${DBUSER}
 # Create a PostgreSQL role named ``docker`` with ``docker`` as the password and
@@ -123,3 +129,7 @@ apt-get install -y libxext-dev libxrender-dev libxtst-dev && \
 apt-get install -y apt-transport-https ca-certificates libcurl3-gnutls && \
 apt-get clean && \
 rm -rf /var/lib/apt/lists/*
+
+USER ${USER}
+
+WORKDIR ${HOME}/Documents/workspace-spring-tool-suite-4-4.7.1.RELEASE
